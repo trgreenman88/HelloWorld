@@ -1,3 +1,4 @@
+--Milestone #1
 create database Banking_Application;
 
 create table Users(

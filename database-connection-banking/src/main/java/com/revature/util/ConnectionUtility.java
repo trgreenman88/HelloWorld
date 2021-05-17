@@ -14,6 +14,18 @@ public class ConnectionUtility {
 	//jdbc:postgresql://localhost:5432/database_name
 	private static final String CONNECTION_URL = "jdbc:postgresql://localhost:5432/banking_application" ; 
 	
+	public String getUsername() {
+		return CONNECTION_USERNAME;
+	}
+
+	public String getPassword() {
+		return CONNECTION_PASSWORD;
+	}
+	
+	public String getUrl() {
+		return CONNECTION_URL;
+	}
+	
 	public static void main(String[] args) {
 		/*
 		 * This code is responsible for registering the driver.
@@ -36,15 +48,16 @@ public class ConnectionUtility {
 		try {
 			Connection connection = DriverManager.getConnection(CONNECTION_URL, CONNECTION_USERNAME, CONNECTION_PASSWORD);
 			System.out.println("Connection is valid "+connection.isValid(5));
-			String sql = "SELECT * FROM account";
-			PreparedStatement statement = connection.prepareStatement(sql);
+			//String sql = "SELECT * FROM account";
+			//PreparedStatement statement = connection.prepareStatement(sql);
 			// statement.setString(1, "%t%");
-			ResultSet set = statement.executeQuery();
-			while(set.next()) {
-				System.out.println(set.getLong("accountid"));
-				System.out.println(set.getDouble("balance"));
-				System.out.println(set.getInt("userid"));
-			}
+			//ResultSet set = statement.executeQuery();
+			//while(set.next()) {
+			//	System.out.println(set.getLong("accountid"));
+			//	System.out.println(set.getDouble("balance"));
+			//	System.out.println(set.getInt("userid"));
+			//}
+			
 		}catch(SQLException ex) {
 			System.out.println("Failure");
 			ex.printStackTrace();

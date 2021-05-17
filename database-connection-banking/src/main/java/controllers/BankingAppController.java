@@ -8,6 +8,8 @@ import model.Employees;
 import model.Transactions;
 import model.User;
 
+import com.revature.util.*;
+
 public class BankingAppController {
 	private static Scanner scan = new Scanner(System.in);
 	
@@ -42,8 +44,10 @@ public class BankingAppController {
 		System.out.println("Which of the following actions would you like to perform?"
 				+ "Please select a number corresponding to the action you desire."
 				+ "\n1. Create an account" + "\n2. Make a transaction"
-				+ "\n3. Deposit/Withdraw money from an account");
+				+ "\n3. Deposit/Withdraw money from an account"
+				+ "\n4. View account balance");
 		int choice = scan.nextInt();
+		scan.nextLine();
 		action(choice, user);
 		}
 	
@@ -52,9 +56,12 @@ public class BankingAppController {
 				+ "Please select a number corresponding to the action you desire."
 				+ "\n1. Create an account" + "\n2. Make a transaction"
 				+ "\n3. Deposit/Withdraw money from an account"
-				+ "\n4. Approve/Reject an account request"
-				+ "\n5. Change User password");
+				+ "\n4. View account balance"
+				+ "\n5. Approve/Reject an account request"
+				+ "\n6. Change User password"
+				+ "\n7. Create new User");
 		int choice = scan.nextInt();
+		scan.nextLine();
 		action(choice, user);
 	}
 	
@@ -74,23 +81,40 @@ public class BankingAppController {
 			double deposit = scan.nextDouble();
 			account1.setBalance(account1.getBalance() + deposit);
 			break;
-			
-		//find out how to make these cases only available to employees
 		case 4:
 			//Fix new creation of account
 			Account account2 = new Account();
-			
-			System.out.println("Please enter Approved or Rejected:");
-			String status = scan.next();
-			account2.setStatus(status);
+			System.out.println(account2.getBalance());
 			break;
+			
+		//find out how to make these cases only available to employees
 		case 5:
+			//Fix new creation of account
+			Account account3 = new Account();
+			System.out.println("Please enter Approved or Rejected:");
+			String status = scan.nextLine();
+			account3.setStatus(status);
+			break;
+		case 6:
 			System.out.println("New Username: ");
-			String username = scan.next();
+			String username = scan.nextLine();
 			user.setUsername(username);
 			System.out.println("New Password: ");
-			String password = scan.next();
+			String password = scan.nextLine();
 			user.setPassword(password);
+			break;
+		case 7:
+			System.out.println("Enter User's Username: ");
+			String userEntry = scan.nextLine();
+			System.out.println("Enter User's Password: ");
+			String passEntry = scan.nextLine();
+			System.out.println("Enter User's Status: ");
+			//Make sure that statusEntry is either "Employee" or "Customer"
+			String statusEntry = scan.nextLine();
+			
+			User newUser = new User(1, userEntry, passEntry, statusEntry);
+			newUser.addUserDB();
+			newUser.logUser();
 			break;
 		default:
 			System.out.println("That is not an option.");

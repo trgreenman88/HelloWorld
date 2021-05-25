@@ -1,1 +1,19 @@
 2021-05-17 13:21:58  INFO model.User:93 User, Mustafa has been created
+2021-05-24 11:52:54  INFO model.Account:83 Account, 0 has been created with starting balance, 100.0
+2021-05-24 14:01:33  INFO model.Transactions:99 $2.0 has been withdrawn from account 19
+2021-05-24 14:07:32  INFO model.Transactions:99 $1.0 has been withdrawn from account 19
+2021-05-24 14:16:56  INFO model.Transactions:130 $1.0 has been deposited into account 19
+2021-05-24 14:18:17  INFO model.Transactions:130 $2.0 has been deposited into account 19
+2021-05-24 14:18:43  INFO model.Transactions:126 $5.0 has been withdrawn from account 12
+2021-05-24 15:07:00  INFO model.Account:173 Account 17 has been approved.
+2021-05-24 15:11:00  INFO model.Account:177 Account 17 has been rejected.
+2021-05-24 17:28:09  INFO model.Transactions:194 $5.0 transfered from account 16 to account 12
+2021-05-24 17:29:30  INFO model.Transactions:194 $2.0 transfered from account 19 to account 13
+2021-05-24 17:34:03  INFO model.Transactions:194 $2.0 transfered from account 19 to account 13
+2021-05-24 17:56:18  INFO model.Account:257 Account, -1 has been created with starting balance, 500.0
+2021-05-24 17:59:09  INFO model.Account:257 Account -1 has been created with starting balance 250.0
+2021-05-24 18:02:53  INFO model.Account:258 Account 22 has been created with starting balance 1000.0
+2021-05-24 18:16:35  INFO model.Transactions:194 $5.0 transfered from account 12 to account 22
+2021-05-24 18:21:05  INFO model.Transactions:194 $5.0 transfered from account 12 to account 16
+2021-05-24 19:34:35  INFO model.Account:287 Account 22 has been approved.
+2021-05-24 19:39:42  INFO model.Transactions:189 $1000000.0 has been deposited into account 22

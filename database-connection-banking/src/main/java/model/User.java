@@ -97,4 +97,6 @@ public class User {
 	public void logUser() {
 		LOG.info("User, "+username+" has been created");
 	}
+	
+
 }

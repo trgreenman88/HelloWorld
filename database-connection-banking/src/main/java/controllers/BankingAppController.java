@@ -416,6 +416,10 @@ public class BankingAppController {
 			System.out.println("Enter User's Status: ");
 			//Make sure that statusEntry is either "Employee" or "Customer"
 			String statusEntry = scan.nextLine();
+			if(!statusEntry.equals("Customer") && !statusEntry.equals("Employee")) {
+				System.out.println("That is not a valid position for the user, try again: ");
+				break;
+			}
 			
 			User newUser = new User(1, userEntry, passEntry, statusEntry);
 			//newUser.addUserDB();

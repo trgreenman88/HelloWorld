@@ -22,10 +22,14 @@ public interface TransactionDAO {
 	//public Transactions[] getAllTransactionsGEQAmount(double amount);
 	
 	public double withdrawDB(Account account, int userid, Transactions transaction, double oldBalance);
+	public double withdrawDB(Account account, Transactions transaction, double oldBalance);
 	public double depositDB(Account account, int userid, Transactions transaction, double oldBalance);
 	public double depositDB(Account account, Transactions transaction, double oldBalance);
 	public double[] transferDB(Account account1, Account account2, int userid, Transactions transaction, double balance1, double balance2);
 	
+	public boolean pendingTransferDB(Account account1, Account account2, int userid, Transactions transaction);
+	public Transactions getTransactionDB(int transactionid);
+	public boolean deletePendingTransaction(Transactions transaction);
 	//public boolean addDepositDB();
 	//public boolean addWithdrawDB();
 	//public boolean addTransferDB();

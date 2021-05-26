@@ -12,23 +12,30 @@ import com.revature.util.ConnectionUtility;
 
 public class Transactions {
 	protected int transactionid;
-	protected String date;
-	protected String description;
 	protected double amount;
+	protected int userid;
+	protected int payingAccountid;
+	protected int recievingAccountid;
 	
 	
 	//Constructors
 	public Transactions() {}
 	
-	public Transactions(int transactionid, String date, String description, double amount) {
+	public Transactions(int transactionid, double amount) {
 		this.transactionid = transactionid;
-		this.date = date;
-		this.description = description;
 		this.amount = amount;
 	}
 	
 	public Transactions(double amount) {
 		this.amount = amount;
+	}
+	
+	public Transactions(int transactionid, double amount, int userid, int payingAccountid, int recievingAccountid) {
+		this.transactionid = transactionid;
+		this.amount = amount;
+		this.userid = userid;
+		this.payingAccountid = payingAccountid;
+		this.recievingAccountid = recievingAccountid;
 	}
 
 	
@@ -41,22 +48,6 @@ public class Transactions {
 		this.transactionid = transactionid;
 	}
 
-	public String getDate() {
-		return date;
-	}
-
-	public void setDate(String date) {
-		this.date = date;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public double getAmount() {
 		return amount;
 	}
@@ -64,92 +55,30 @@ public class Transactions {
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
-/*	
-	public double withdrawDB(int accountid, int userid, double amount, double oldBalance) {
-		try {
-			ConnectionUtility connectionInfo = new ConnectionUtility();
-			connectionInfo.registerDriver();
-			Connection connection = connectionInfo.createConnection();
-			double newBalance = oldBalance - amount;
-			if(newBalance < 0) {
-				//Maybe throw an exception here
-				System.out.println("This transaction results in a negative account balance.");
-				return -1;
-			} 
-			String sql = "UPDATE account SET balance = "+newBalance+" WHERE accountid = "+accountid+" and userid = "+userid+";";
-			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.execute();
-			return newBalance;
-		}catch(SQLException ex) {
-			System.out.println("Failure");
-			ex.printStackTrace();
-			return -1;
-		}
+
+	public int getUserid() {
+		return userid;
 	}
 	
-	
-	public double depositDB(int accountid, int userid, double amount, double oldBalance) {
-		try {
-			ConnectionUtility connectionInfo = new ConnectionUtility();
-			connectionInfo.registerDriver();
-			Connection connection = connectionInfo.createConnection();
-			double newBalance = oldBalance + amount;
-			String sql = "UPDATE account SET balance = "+newBalance+" WHERE accountid = "+accountid+" and userid = "+userid+";";
-			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.execute();
-			return newBalance;
-		}catch(SQLException ex) {
-			System.out.println("Failure");
-			ex.printStackTrace();
-			return -1;
-		}
+	public void setUserid(int userid) {
+		this.userid = userid;
 	}
 	
-	//Used for transfers
-	public double depositDB(int accountid, double amount, double oldBalance) {
-		try {
-			ConnectionUtility connectionInfo = new ConnectionUtility();
-			connectionInfo.registerDriver();
-			Connection connection = connectionInfo.createConnection();
-			double newBalance = oldBalance + amount;
-			String sql = "UPDATE account SET balance = "+newBalance+" WHERE accountid = "+accountid+";";
-			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.execute();
-			return newBalance;
-		}catch(SQLException ex) {
-			System.out.println("Failure");
-			ex.printStackTrace();
-			return -1;
-		}
+	public int getPayingAccountid() {
+		return payingAccountid;
 	}
 	
-	public double[] transferDB(int accountid1, int accountid2, int userid, double amount, double balance1, double balance2) {
-		try {
-			ConnectionUtility connectionInfo = new ConnectionUtility();
-			connectionInfo.registerDriver();
-			Connection connection = connectionInfo.createConnection();
-			double newBalance1 = balance1 - amount;
-			double newBalance2 = balance2 + amount;
-			if(newBalance1 < 0) {
-				//Maybe throw an exception here
-				System.out.println("This transaction results in a negative account balance.");
-				return null;
-			} 
-			String sql1 = "UPDATE account SET balance = "+newBalance1+" WHERE accountid = "+accountid1+" and userid = "+userid+";";
-			PreparedStatement statement1 = connection.prepareStatement(sql1);
-			statement1.execute();
-			String sql2 = "UPDATE account SET balance = "+newBalance2+"WHERE accountid = "+accountid2+";";
-			PreparedStatement statement2 = connection.prepareStatement(sql2);
-			statement2.execute();
-			double[] result = {newBalance1, newBalance2};
-			return result;
-		}catch(SQLException ex) {
-			System.out.println("Failure");
-			ex.printStackTrace();
-			return null;
-		}
+	public void setPayingAccountid(int payingAccountid) {
+		this.payingAccountid = payingAccountid;
 	}
-*/
+	
+	public int getRecievingAccountid() {
+		return recievingAccountid;
+	}
+	
+	public void setRecievingAccountid(int recievingAccountid) {
+		this.recievingAccountid = recievingAccountid;
+	}
 	
 	//Logging a withdrawal and deposit
 	private static final Logger LOG = LogManager.getLogger(User.class);
@@ -165,5 +94,19 @@ public class Transactions {
 	//Logging a transfer
 	public void logTransfer(double amount, int accountid1, int accountid2) {
 		LOG.info("$"+amount+" transfered from account "+accountid1+" to account "+accountid2);
+	}
+	
+	//Logging a pending transfer
+	public void logPendingTransfer(double amount, int accountid1, int accountid2, int userid) {
+		LOG.info("User "+userid+" has posted a transfer of $"+amount+" from account "+accountid1+" to "+accountid2);
+	}
+	
+	//Logging an accept/reject of pending transfer
+	public void logRejectTransfer(int transactionid) {
+		LOG.info("Transaction "+transactionid+" was rejected");
+	}
+	
+	public void logAcceptTransfer(int transactionid) {
+		LOG.info("Transaction "+transactionid+" was accepted");
 	}
 }

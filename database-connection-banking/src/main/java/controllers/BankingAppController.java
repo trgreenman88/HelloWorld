@@ -1,5 +1,6 @@
 package controllers;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 import com.revature.dao.AccountDAOImpl;
@@ -10,8 +11,6 @@ import com.revature.util.*;
 import model.Account;
 import model.Transactions;
 import model.User;
-
-import com.revature.util.*;
 
 public class BankingAppController {
 	private static Scanner scan = new Scanner(System.in);
@@ -57,9 +56,10 @@ public class BankingAppController {
 			System.out.println("Which of the following actions would you like to perform? "
 					+ "Please select a number corresponding to the action you desire."
 					+ "\n0. Quit the program"
-					+ "\n1. Create an account" + "\n2. Make a transfer"
-					+ "\n3. Deposit/Withdraw money from an account"
-					+ "\n4. View account balance");
+					+ "\n1. Create an account" + "\n2. Post a pending transfer"
+					+ "\n3. Approve/Reject a pending transfer"
+					+ "\n4. Deposit/Withdraw money from an account"
+					+ "\n5. View account balance");
 			choice = scan.nextInt();
 			scan.nextLine();
 			action(choice, user);
@@ -73,12 +73,13 @@ public class BankingAppController {
 			System.out.println("Which of the following actions would you like to perform? "
 					+ "Please select a number corresponding to the action you desire."
 					+ "\n0. Quit the program"
-					+ "\n1. Create an account" + "\n2. Make a transfer"
-					+ "\n3. Deposit/Withdraw money from an account"
-					+ "\n4. View account balance"
-					+ "\n5. Approve/Reject an account request"
-					+ "\n6. View customer accounts"
-					+ "\n7. Create new User");
+					+ "\n1. Create an account" + "\n2. Post a pending transfer"
+					+ "\n3. Approve/Reject a pending transfer"
+					+ "\n4. Deposit/Withdraw money from an account"
+					+ "\n5. View account balance"
+					+ "\n6. Approve/Reject an account request"
+					+ "\n7. View customer accounts"
+					+ "\n8. Create new User");
 			choice = scan.nextInt();
 			scan.nextLine();
 			action(choice, user);
@@ -87,7 +88,7 @@ public class BankingAppController {
 	
 	
 	public static void action(int choice, User user) {
-		if((choice >= 5 && choice <= 7) && !user.getStatus().equals("Employee")) {
+		if((choice >= 6 && choice <= 8) && !user.getStatus().equals("Employee")) {
 			System.out.println("You must be an employee to access this option.");
 			return;
 		}
@@ -107,71 +108,142 @@ public class BankingAppController {
 			newAccount.logAccount(accountDAO.getNewestAccountID(), balance);
 			break;
 			
-		//Transfer between accounts	
+		//Create a pending transfer	
 		case 2:
-			System.out.println("Enter Account ID to transfer from: ");
-			int accountid01 = scan.nextInt();
+			System.out.println("Enter account ID of giving account: ");
+			int acctid1 = scan.nextInt();
 			scan.nextLine();
-			Account account01 = new Account(accountid01);
-			AccountDAOImpl accountDAO01 = new AccountDAOImpl();
-			if(!accountDAO01.checkValidID(account01)) {
+			Account acct1 = new Account(acctid1);
+			AccountDAOImpl acctDAO1 = new AccountDAOImpl();
+			
+			//Check that accountID is valid
+			if(!acctDAO1.checkValidID(acct1)) {
 				break;
 			}
-			if(!accountDAO01.checkApproved(account01)) {
-				System.out.println("This account has not yet been approved.");
+			//Check that user owns this account.
+			if(!acctDAO1.checkOwnership(acct1, user.getUserid())) {
 				break;
 			}
-			System.out.println("Enter Account ID to transfer to: ");
-			int accountid02 = scan.nextInt();
+			
+			System.out.println("Enter account ID of recieving account: ");
+			int acctid2 = scan.nextInt();
 			scan.nextLine();
-			Account account02 = new Account(accountid02);
-			if(accountid01 == accountid02) {
+			Account acct2 = new Account(acctid2);
+			acctDAO1.checkValidID(acct2);
+			
+			if(acctid1 == acctid2) {
+				System.out.println("You cannot transfer money from an account to itself.");
+				break;
+			}
+			
+			double amt = 0;
+			//Make sure transfer amount is positive.
+			while (true) {
+				System.out.println("Enter transfer amount: ");
+				amt = scan.nextDouble();
+				scan.nextLine();
+				if (amt >= 0) {
+					break;
+				}else {
+					System.out.println("That is not a valid amount, please try again: ");
+				}
+			}
+			Transactions trans = new Transactions(amt);
+			TransactionDAOImpl transDAO = new TransactionDAOImpl();
+			transDAO.pendingTransferDB(acct1, acct2, user.getUserid(), trans);
+			trans.logPendingTransfer(amt, acctid1, acctid2, user.getUserid());
+			break;
+			
+		//Accept/Reject pending transfers	
+		case 3:	
+			System.out.println("Enter Transaction ID to interact with: ");
+			int transid = scan.nextInt();
+			scan.nextLine();
+			TransactionDAOImpl transDAO1 = new TransactionDAOImpl();
+			AccountDAOImpl acctDAO = new AccountDAOImpl();
+			Transactions trans1 = transDAO1.getTransactionDB(transid);
+			if (Objects.isNull(trans1)) {
+				break;
+			}
+			Account acct01 = new Account(trans1.getPayingAccountid());
+			Account acct02 = new Account(trans1.getRecievingAccountid());
+			
+			if(!acctDAO.checkValidID(acct01)) {
+				System.out.println("There is a problem with the paying account.");
+				break;
+			}
+			if(!acctDAO.checkValidID(acct02)) {
+				System.out.println("There is a problem with the receiving account.");
+				break;
+			}
+			if(!acctDAO.checkApproved(acct01)) {
+				System.out.println("The paying account has not yet been approved.");
+				break;
+			}
+			if(!acctDAO.checkApproved(acct02)) {
+				System.out.println("This receiving account has not yet been approved.");
+				break;
+			}
+			if(acct01.getAccountid() == acct02.getAccountid()) {
 				System.out.println("You can't transfer money to the same account.");
 				break;
 			}
-			if(!accountDAO01.checkValidID(account02)) {
-				break;
-			}
-			if(!accountDAO01.checkApproved(account02)) {
-				System.out.println("This account has not yet been approved.");
-				break;
-			}
-			double amount01 = -1;
-			while(true) {
-				System.out.println("Enter transfer amount:");
-				amount01 = scan.nextDouble();
-				scan.nextLine();
-				if(amount01 >= 0) {
-					break;
+			
+			System.out.println("Which of the following actions would you like to perform? "
+					+ "Please select a number corresponding to the action you desire."
+					+ "\n1. Reject the transfer"
+					+ "\n2. Accept the transfer");
+			int answer = scan.nextInt();
+			scan.nextLine();
+			
+			switch(answer) {
+			case 1:
+				if(acctDAO.checkOwnership(acct02, user.getUserid())) {
+					transDAO1.deletePendingTransaction(trans1);
+					//log reject transfer
+					trans1.logRejectTransfer(trans1.getTransactionid());
 				}else {
-					System.out.println("That is not a valid amount, try again: ");
+					System.out.println("You do not have access to this transaction.");
 				}
-			}
-			Transactions transaction1 = new Transactions(amount01);
-			TransactionDAOImpl transactionDAO1 = new TransactionDAOImpl();
-			double balance01 = accountDAO01.getBalanceDB(account01, user.getUserid());
-			//Here
-			double balance02 = accountDAO01.getBalanceDB(account02);
-			if(balance01 == -1) {
 				break;
-			}
-			double newBalance01 = transactionDAO1.withdrawDB(account01, user.getUserid(), transaction1, balance01);
-			double newBalance02 = transactionDAO1.depositDB(account02, transaction1, balance02);
-			if(newBalance01 != -1) {
-				System.out.println("You have transfered $"+amount01+" from account "+accountid01+" to "
-						+ "account "+accountid02+"."
-						+ "\n Your balance in account "+accountid01+" is now $"+newBalance01
-						+ "\n Your balance in account "+accountid02+" is now $"+newBalance02);
-				transaction1.logTransfer(amount01, accountid01, accountid02);
-			} else {
-				System.out.println("Transfer failed.");
+			case 2:
+				double balance01 = acctDAO.getBalanceDB(acct01);
+				//Only the receiving user can accept or reject transfers
+				double balance02 = acctDAO.getBalanceDB(acct02, user.getUserid());
+				if (balance02 == -1) {
+					break;
+				}
+				
+				if(balance01 == -1) {
+					break;
+				}
+				double newBalance01 = transDAO1.withdrawDB(acct01, trans1, balance01);
+				//Breaks if the withdrawal resluts in a negative account balance
+				if(newBalance01 == -1) {
+					break;
+				}
+				double newBalance02 = transDAO1.depositDB(acct02, user.getUserid(), trans1, balance02);
+				if(newBalance01 != -1) {
+					System.out.println("You have transfered $"+trans1.getAmount()+" from account "+acct01.getAccountid()+" to "
+							+ "account "+acct02.getAccountid()+"."
+							+ "\n Your balance in account "+acct01.getAccountid()+" is now $"+newBalance01
+							+ "\n Your balance in account "+acct02.getAccountid()+" is now $"+newBalance02);
+					trans1.logTransfer(trans1.getAmount(), acct01.getAccountid(), acct02.getAccountid());
+					transDAO1.deletePendingTransaction(trans1);
+					//Log accept transfer
+					trans1.logAcceptTransfer(trans1.getTransactionid());
+				} else {
+					System.out.println("Transfer failed.");
+				}
+				break;
+			default:
+				System.out.println("That is not a valid option.");
 			}
 			break;
 			
-		//Make a withdrawal/deposit	
-		case 3:
-			//Transactions transaction = new Transactions();
 			
+		//Make a withdrawal/deposit	
+		case 4:
 			System.out.println("Which of the following actions would you like to perform? "
 					+ "Please select a number corresponding to the action you desire."
 					+ "\n1. Deposit money into account."
@@ -269,7 +341,7 @@ public class BankingAppController {
 			break;
 			
 		//View account balance	
-		case 4:
+		case 5:
 			System.out.println("Please enter the Account ID of the balance which you would like to check.");
 			int accountid = scan.nextInt();
 			scan.nextLine();
@@ -290,7 +362,7 @@ public class BankingAppController {
 			
 		//Only available to employees
 		//Approve/Reject account requests
-		case 5:
+		case 6:
 			Account account3 = new Account();
 			AccountDAOImpl accountDAO3 = new AccountDAOImpl();
 			System.out.println("Enter accountid: ");
@@ -326,7 +398,7 @@ public class BankingAppController {
 			break;
 			
 		//Get customer accounts	
-		case 6:
+		case 7:
 			//Account account4 = new Account();
 			AccountDAOImpl accountDAO4 = new AccountDAOImpl();
 			System.out.println("Enter User ID: ");
@@ -336,7 +408,7 @@ public class BankingAppController {
 			break;
 			
 		//Create a user
-		case 7:
+		case 8:
 			System.out.println("Enter User's Username: ");
 			String userEntry = scan.nextLine();
 			System.out.println("Enter User's Password: ");

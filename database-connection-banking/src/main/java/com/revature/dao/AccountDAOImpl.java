@@ -10,15 +10,18 @@ import com.revature.util.ConnectionUtility;
 import model.Account;
 
 public class AccountDAOImpl implements AccountDAO {
+	private PreparedStatement statement;
+	private Connection connection;
+	
 	//Adding new pending account to database
 	@Override
 	public boolean addPendingAccountDB(Account account, int userid) {
 		try {
 			ConnectionUtility connectionInfo = new ConnectionUtility();
 			connectionInfo.registerDriver();
-			Connection connection = connectionInfo.createConnection();
+			connection = connectionInfo.createConnection();
 			String sql = "INSERT INTO account (balance, userid, approved) VALUES ('"+account.getBalance()+"', '"+userid+"', false);";
-			PreparedStatement statement = connection.prepareStatement(sql);
+			statement = connection.prepareStatement(sql);
 			statement.execute();
 			System.out.println("New pending account has been successfully created.");
 			return true;
@@ -26,6 +29,8 @@ public class AccountDAOImpl implements AccountDAO {
 			System.out.println("Failure");
 			ex.printStackTrace();
 			return false;
+		}finally {
+			closeResources(); 
 		}
 	}
 	
@@ -35,9 +40,9 @@ public class AccountDAOImpl implements AccountDAO {
 		try {
 			ConnectionUtility connectionInfo = new ConnectionUtility();
 			connectionInfo.registerDriver();
-			Connection connection = connectionInfo.createConnection();
+			connection = connectionInfo.createConnection();
 			String sql = "select balance from account where accountid = '"+account.getAccountid()+"' and userid = '"+userid+"' limit 1;";
-			PreparedStatement statement = connection.prepareStatement(sql);
+			statement = connection.prepareStatement(sql);
 			ResultSet set = statement.executeQuery();
 			if (set.next() == true) {
 				return set.getDouble("balance");
@@ -49,6 +54,8 @@ public class AccountDAOImpl implements AccountDAO {
 			System.out.println("Failure");
 			ex.printStackTrace();
 			return -1;
+		}finally {
+			closeResources(); 
 		}
 	}
 	
@@ -58,9 +65,9 @@ public class AccountDAOImpl implements AccountDAO {
 		try {
 			ConnectionUtility connectionInfo = new ConnectionUtility();
 			connectionInfo.registerDriver();
-			Connection connection = connectionInfo.createConnection();
+			connection = connectionInfo.createConnection();
 			String sql = "select balance from account where accountid = '"+account.getAccountid()+"' limit 1;";
-			PreparedStatement statement = connection.prepareStatement(sql);
+			statement = connection.prepareStatement(sql);
 			ResultSet set = statement.executeQuery();
 			if (set.next() == true) {
 				return set.getDouble("balance");
@@ -72,6 +79,8 @@ public class AccountDAOImpl implements AccountDAO {
 			System.out.println("Failure");
 			ex.printStackTrace();
 			return -1;
+		}finally {
+			closeResources(); 
 		}
 	}
 	
@@ -81,9 +90,9 @@ public class AccountDAOImpl implements AccountDAO {
 		try {
 			ConnectionUtility connectionInfo = new ConnectionUtility();
 			connectionInfo.registerDriver();
-			Connection connection = connectionInfo.createConnection();
+			connection = connectionInfo.createConnection();
 			String sql = "UPDATE account SET approved = true WHERE accountid = "+account.getAccountid()+";";
-			PreparedStatement statement = connection.prepareStatement(sql);
+			statement = connection.prepareStatement(sql);
 			statement.execute();
 			System.out.println("Account "+account.getAccountid()+" has been approved.");
 			return true;
@@ -91,6 +100,8 @@ public class AccountDAOImpl implements AccountDAO {
 			System.out.println("Failure");
 			ex.printStackTrace();
 			return false;
+		}finally {
+			closeResources(); 
 		}
 	}
 	
@@ -100,9 +111,9 @@ public class AccountDAOImpl implements AccountDAO {
 		try {
 			ConnectionUtility connectionInfo = new ConnectionUtility();
 			connectionInfo.registerDriver();
-			Connection connection = connectionInfo.createConnection();
+			connection = connectionInfo.createConnection();
 			String sql = "DELETE FROM account WHERE accountid = "+account.getAccountid()+";";
-			PreparedStatement statement = connection.prepareStatement(sql);
+			statement = connection.prepareStatement(sql);
 			statement.execute();
 			System.out.println("Account "+account.getAccountid()+" has been rejected.");
 			return true;
@@ -110,6 +121,8 @@ public class AccountDAOImpl implements AccountDAO {
 			System.out.println("Failure");
 			ex.printStackTrace();
 			return false;
+		}finally {
+			closeResources(); 
 		}
 	}
 	
@@ -118,9 +131,9 @@ public class AccountDAOImpl implements AccountDAO {
 		try {
 			ConnectionUtility connectionInfo = new ConnectionUtility();
 			connectionInfo.registerDriver();
-			Connection connection = connectionInfo.createConnection();
+			connection = connectionInfo.createConnection();
 			String sql = "select * from account where userid = '"+userid+"';";
-			PreparedStatement statement = connection.prepareStatement(sql);
+			statement = connection.prepareStatement(sql);
 			ResultSet set = statement.executeQuery();
 			if (set.next() != true) {
 				System.out.println("There are no accounts which belong to that user.");
@@ -137,6 +150,8 @@ public class AccountDAOImpl implements AccountDAO {
 		}catch(SQLException ex) {
 			System.out.println("Failure");
 			ex.printStackTrace();
+		}finally {
+			closeResources(); 
 		}
 	}
 	
@@ -145,9 +160,9 @@ public class AccountDAOImpl implements AccountDAO {
 		try {
 			ConnectionUtility connectionInfo = new ConnectionUtility();
 			connectionInfo.registerDriver();
-			Connection connection = connectionInfo.createConnection();
+			connection = connectionInfo.createConnection();
 			String sql = "select max(accountid) from account;";
-			PreparedStatement statement = connection.prepareStatement(sql);
+			statement = connection.prepareStatement(sql);
 			ResultSet set = statement.executeQuery();
 			set.next();
 			return set.getInt("max");
@@ -155,6 +170,8 @@ public class AccountDAOImpl implements AccountDAO {
 			System.out.println("Failure");
 			ex.printStackTrace();
 			return -1;
+		}finally {
+			closeResources(); 
 		}
 	}
 	
@@ -163,9 +180,9 @@ public class AccountDAOImpl implements AccountDAO {
 		try {
 			ConnectionUtility connectionInfo = new ConnectionUtility();
 			connectionInfo.registerDriver();
-			Connection connection = connectionInfo.createConnection();
+			connection = connectionInfo.createConnection();
 			String sql = "SELECT approved FROM account WHERE accountid = "+account.getAccountid()+" limit 1;";
-			PreparedStatement statement = connection.prepareStatement(sql);
+			statement = connection.prepareStatement(sql);
 			ResultSet set = statement.executeQuery();
 			set.next();
 			//System.out.println("That is not a valid account ID");
@@ -175,6 +192,8 @@ public class AccountDAOImpl implements AccountDAO {
 			System.out.println("Failure");
 			ex.printStackTrace();
 			return false;
+		}finally {
+			closeResources(); 
 		}
 	}
 	
@@ -183,9 +202,9 @@ public class AccountDAOImpl implements AccountDAO {
 		try {
 			ConnectionUtility connectionInfo = new ConnectionUtility();
 			connectionInfo.registerDriver();
-			Connection connection = connectionInfo.createConnection();
+			connection = connectionInfo.createConnection();
 			String sql = "SELECT approved FROM account WHERE accountid = "+account.getAccountid()+" limit 1;";
-			PreparedStatement statement = connection.prepareStatement(sql);
+			statement = connection.prepareStatement(sql);
 			ResultSet set = statement.executeQuery();
 			if(set.next()) {
 				return true;
@@ -198,6 +217,46 @@ public class AccountDAOImpl implements AccountDAO {
 			System.out.println("Failure");
 			ex.printStackTrace();
 			return false;
+		}finally {
+			closeResources(); 
+		}
+	}
+	
+	@Override
+	public boolean checkOwnership(Account account, int userid) {
+		try {
+			ConnectionUtility connectionInfo = new ConnectionUtility();
+			connectionInfo.registerDriver();
+			connection = connectionInfo.createConnection();
+			String sql = "SELECT * FROM account WHERE accountid = "+account.getAccountid()+" AND userid = "+userid+" limit 1;";
+			statement = connection.prepareStatement(sql);
+			ResultSet set = statement.executeQuery();
+			if(set.next()) {
+				return true;
+			}else {
+				System.out.println("That account ID is not valid for your user.");
+				return false;
+			}
+			
+		}catch(SQLException ex) {
+			System.out.println("Failure");
+			ex.printStackTrace();
+			return false;
+		}finally {
+			closeResources(); 
+		}
+	}
+	
+	private void closeResources() {
+		try {
+			if (statement != null && !statement.isClosed()) {
+				statement.close();
+			}
+			if(connection != null && !connection.isClosed()) {
+				connection.close(); 
+			}
+		}catch(SQLException ex ) {
+			ex.printStackTrace();
 		}
 	}
 }

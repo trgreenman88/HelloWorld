@@ -43,3 +43,31 @@
 2021-05-25 15:06:03  INFO model.Transactions:158 $50.0 has been withdrawn from account 16
 2021-05-25 15:46:43  INFO model.User:68 User, Number2 has been created
 2021-05-25 16:24:47  INFO model.Account:62 Account 16 has been approved.
+2021-05-25 19:08:49  INFO model.Transactions:87 User1has posted a transfer of $100.0 from account 12 to 21
+2021-05-25 20:24:21  INFO model.Transactions:101 User 1 has posted a transfer of $10.0 from account 12 to 21
+2021-05-25 20:24:47  INFO model.Transactions:96 $10.0 transfered from account 12 to account 21
+2021-05-25 20:34:48  INFO model.Transactions:101 User 1 has posted a transfer of $5.0 from account 12 to 16
+2021-05-25 20:35:07  INFO model.Transactions:101 User 1 has posted a transfer of $50.0 from account 16 to 12
+2021-05-25 20:39:23  INFO model.Transactions:106 Transaction 4 was rejected
+2021-05-25 20:40:27  INFO model.Transactions:106 Transaction 5 was rejected
+2021-05-25 20:46:14  INFO model.Transactions:101 User 1 has posted a transfer of $50.0 from account 12 to 16
+2021-05-25 20:56:50  INFO model.Transactions:96 $50.0 transfered from account 12 to account 16
+2021-05-25 20:56:50  INFO model.Transactions:110 Transaction 6 was accepted
+2021-05-25 20:58:25  INFO model.Transactions:101 User 1 has posted a transfer of $50.0 from account 19 to 20
+2021-05-25 21:01:20  INFO model.Transactions:101 User 1 has posted a transfer of $100000.0 from account 12 to 16
+2021-05-25 21:39:15  INFO model.Transactions:101 User 1 has posted a transfer of $15.0 from account 16 to 19
+2021-05-25 21:39:26  INFO model.Transactions:101 User 1 has posted a transfer of $10.0 from account 19 to 16
+2021-05-25 21:40:03  INFO model.Transactions:101 User 1 has posted a transfer of $100.0 from account 16 to 16
+2021-05-25 21:41:12  INFO model.Transactions:101 User 1 has posted a transfer of $18.0 from account 16 to 24
+2021-05-25 21:53:45  INFO model.Transactions:101 User 1 has posted a transfer of $100000.0 from account 16 to 24
+2021-05-25 21:55:11  INFO model.Transactions:101 User 1 has posted a transfer of $1.0E7 from account 16 to 24
+2021-05-25 21:56:53  INFO model.Transactions:96 $100000.0 transfered from account 16 to account 24
+2021-05-25 21:56:53  INFO model.Transactions:110 Transaction 13 was accepted
+2021-05-25 22:15:37  INFO model.Account:62 Account 23 has been approved.
+2021-05-25 22:28:19  INFO model.Account:58 Account 35 has been created with starting balance 500.0
+2021-05-25 22:28:36  INFO model.Transactions:101 User 1 has posted a transfer of $25.0 from account 12 to 16
+2021-05-25 22:28:45  INFO model.Transactions:101 User 1 has posted a transfer of $30.0 from account 12 to 16
+2021-05-25 22:29:31  INFO model.Transactions:106 Transaction 15 was rejected
+2021-05-25 22:30:10  INFO model.Transactions:96 $30.0 transfered from account 12 to account 16
+2021-05-25 22:30:10  INFO model.Transactions:110 Transaction 16 was accepted
+2021-05-25 22:32:28  INFO model.Transactions:87 $2.0 has been withdrawn from account 12

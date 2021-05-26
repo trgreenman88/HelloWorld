@@ -9,13 +9,16 @@ import java.sql.SQLException;
 import model.User;
 
 public class AuthenticationService {
+	private PreparedStatement statement;
+	private Connection connection;
+	
 	public boolean loginUserDB(String user, String password) {
 		try {	
 			ConnectionUtility connectionInfo = new ConnectionUtility();
 			connectionInfo.registerDriver();
-			Connection connection = connectionInfo.createConnection();
+			connection = connectionInfo.createConnection();
 			String sql = "select * from users where username = '"+user+"' and password = '"+password+"' limit 1;";
-			PreparedStatement statement = connection.prepareStatement(sql);
+			statement = connection.prepareStatement(sql);
 			ResultSet set = statement.executeQuery();
 			if (set.next() == true) {
 				return true;
@@ -27,6 +30,8 @@ public class AuthenticationService {
 			System.out.println("Failure");
 			ex.printStackTrace();
 			return false;
+		}finally {
+			closeResources(); 
 		}
 			
 	}
@@ -35,9 +40,9 @@ public class AuthenticationService {
 		try {
 			ConnectionUtility connectionInfo = new ConnectionUtility();
 			connectionInfo.registerDriver();
-			Connection connection = connectionInfo.createConnection();
+			connection = connectionInfo.createConnection();
 			String sql = "select * from users where username = '"+user+"' and password = '"+password+"' limit 1;";
-			PreparedStatement statement = connection.prepareStatement(sql);
+			statement = connection.prepareStatement(sql);
 			ResultSet set = statement.executeQuery();
 			set.next();
 			//String[] result = {set.getString(1), set.getString(2), set.getString(3), set.getString(4)};
@@ -46,9 +51,24 @@ public class AuthenticationService {
 		}catch(SQLException ex) {
 			System.out.println("Failure");
 			ex.printStackTrace();
+			return null;
+		}finally {
+			closeResources(); 
 		}
-		return null;
 
+	}
+	
+	private void closeResources() {
+		try {
+			if (statement != null && !statement.isClosed()) {
+				statement.close();
+			}
+			if(connection != null && !connection.isClosed()) {
+				connection.close(); 
+			}
+		}catch(SQLException ex ) {
+			ex.printStackTrace();
+		}
 	}
 	
 }

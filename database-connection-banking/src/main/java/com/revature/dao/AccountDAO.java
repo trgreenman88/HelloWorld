@@ -23,4 +23,5 @@ public interface AccountDAO {
 	public int getNewestAccountID();
 	public boolean checkApproved(Account account);
 	public boolean checkValidID(Account account);
+	public boolean checkOwnership(Account account, int userid);
 }

@@ -26,6 +26,10 @@ public class Transactions {
 		this.description = description;
 		this.amount = amount;
 	}
+	
+	public Transactions(double amount) {
+		this.amount = amount;
+	}
 
 	
 	//Getters and Setters
@@ -60,20 +64,12 @@ public class Transactions {
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
-	
+/*	
 	public double withdrawDB(int accountid, int userid, double amount, double oldBalance) {
 		try {
-			Class.forName("org.postgresql.Driver");
-		} catch (ClassNotFoundException e) {
-			//If the class is not found the driver could not be registered. 
-			System.out.println("Could not register driver!");
-			e.printStackTrace();
-		}
-
-		try {
 			ConnectionUtility connectionInfo = new ConnectionUtility();
-			Connection connection = DriverManager.getConnection(connectionInfo.getUrl(), 
-					connectionInfo.getUsername(), connectionInfo.getPassword());
+			connectionInfo.registerDriver();
+			Connection connection = connectionInfo.createConnection();
 			double newBalance = oldBalance - amount;
 			if(newBalance < 0) {
 				//Maybe throw an exception here
@@ -94,17 +90,9 @@ public class Transactions {
 	
 	public double depositDB(int accountid, int userid, double amount, double oldBalance) {
 		try {
-			Class.forName("org.postgresql.Driver");
-		} catch (ClassNotFoundException e) {
-			//If the class is not found the driver could not be registered. 
-			System.out.println("Could not register driver!");
-			e.printStackTrace();
-		}
-
-		try {
 			ConnectionUtility connectionInfo = new ConnectionUtility();
-			Connection connection = DriverManager.getConnection(connectionInfo.getUrl(), 
-					connectionInfo.getUsername(), connectionInfo.getPassword());
+			connectionInfo.registerDriver();
+			Connection connection = connectionInfo.createConnection();
 			double newBalance = oldBalance + amount;
 			String sql = "UPDATE account SET balance = "+newBalance+" WHERE accountid = "+accountid+" and userid = "+userid+";";
 			PreparedStatement statement = connection.prepareStatement(sql);
@@ -120,17 +108,9 @@ public class Transactions {
 	//Used for transfers
 	public double depositDB(int accountid, double amount, double oldBalance) {
 		try {
-			Class.forName("org.postgresql.Driver");
-		} catch (ClassNotFoundException e) {
-			//If the class is not found the driver could not be registered. 
-			System.out.println("Could not register driver!");
-			e.printStackTrace();
-		}
-
-		try {
 			ConnectionUtility connectionInfo = new ConnectionUtility();
-			Connection connection = DriverManager.getConnection(connectionInfo.getUrl(), 
-					connectionInfo.getUsername(), connectionInfo.getPassword());
+			connectionInfo.registerDriver();
+			Connection connection = connectionInfo.createConnection();
 			double newBalance = oldBalance + amount;
 			String sql = "UPDATE account SET balance = "+newBalance+" WHERE accountid = "+accountid+";";
 			PreparedStatement statement = connection.prepareStatement(sql);
@@ -145,17 +125,9 @@ public class Transactions {
 	
 	public double[] transferDB(int accountid1, int accountid2, int userid, double amount, double balance1, double balance2) {
 		try {
-			Class.forName("org.postgresql.Driver");
-		} catch (ClassNotFoundException e) {
-			//If the class is not found the driver could not be registered. 
-			System.out.println("Could not register driver!");
-			e.printStackTrace();
-		}
-
-		try {
 			ConnectionUtility connectionInfo = new ConnectionUtility();
-			Connection connection = DriverManager.getConnection(connectionInfo.getUrl(), 
-					connectionInfo.getUsername(), connectionInfo.getPassword());
+			connectionInfo.registerDriver();
+			Connection connection = connectionInfo.createConnection();
 			double newBalance1 = balance1 - amount;
 			double newBalance2 = balance2 + amount;
 			if(newBalance1 < 0) {
@@ -177,6 +149,7 @@ public class Transactions {
 			return null;
 		}
 	}
+*/
 	
 	//Logging a withdrawal and deposit
 	private static final Logger LOG = LogManager.getLogger(User.class);

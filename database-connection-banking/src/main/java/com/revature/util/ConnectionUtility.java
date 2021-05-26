@@ -48,21 +48,35 @@ public class ConnectionUtility {
 		try {
 			Connection connection = DriverManager.getConnection(CONNECTION_URL, CONNECTION_USERNAME, CONNECTION_PASSWORD);
 			System.out.println("Connection is valid "+connection.isValid(5));
-			//String sql = "SELECT * FROM account";
-			//PreparedStatement statement = connection.prepareStatement(sql);
-			// statement.setString(1, "%t%");
-			//ResultSet set = statement.executeQuery();
-			//while(set.next()) {
-			//	System.out.println(set.getLong("accountid"));
-			//	System.out.println(set.getDouble("balance"));
-			//	System.out.println(set.getInt("userid"));
-			//}
 			
 		}catch(SQLException ex) {
 			System.out.println("Failure");
 			ex.printStackTrace();
-			
 		}
-
 	}
+		
+	public void registerDriver() {
+		try {
+			Class.forName("org.postgresql.Driver");
+		} catch (ClassNotFoundException e) {
+			//If the class is not found the driver could not be registered. 
+			System.out.println("Could not register driver!");
+			e.printStackTrace();
+		}
+	}
+	
+	public Connection createConnection() {
+		try{
+			ConnectionUtility connectionInfo = new ConnectionUtility();
+			Connection connection = DriverManager.getConnection(connectionInfo.getUrl(), 
+					connectionInfo.getUsername(), connectionInfo.getPassword());
+			return connection;
+		} catch(SQLException ex){
+			System.out.println("Failure");
+			ex.printStackTrace();
+			return null;
+		}
+		
+	}
+
 }

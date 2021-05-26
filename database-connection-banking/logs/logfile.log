@@ -17,3 +17,29 @@
 2021-05-24 18:21:05  INFO model.Transactions:194 $5.0 transfered from account 12 to account 16
 2021-05-24 19:34:35  INFO model.Account:287 Account 22 has been approved.
 2021-05-24 19:39:42  INFO model.Transactions:189 $1000000.0 has been deposited into account 22
+2021-05-25 09:59:50  INFO model.Account:283 Account 23 has been created with starting balance 700.0
+2021-05-25 10:07:19  INFO model.Transactions:194 $50.0 transfered from account 12 to account 22
+2021-05-25 11:53:34  INFO model.Transactions:162 $5.0 transfered from account 16 to account 12
+2021-05-25 12:10:59  INFO model.User:91 User, ScottEvil has been created
+2021-05-25 12:48:06  INFO model.Account:221 Account 24 has been created with starting balance 600.0
+2021-05-25 12:51:00  INFO model.Transactions:162 $6.0 transfered from account 12 to account 22
+2021-05-25 12:52:43  INFO model.Transactions:157 $500.0 has been deposited into account 16
+2021-05-25 12:53:45  INFO model.Account:225 Account 24 has been approved.
+2021-05-25 12:57:30  INFO model.User:68 User, MiniMe has been created
+2021-05-25 14:06:13  INFO model.Account:53 Account 25 has been created with starting balance 10.0
+2021-05-25 14:06:48  INFO model.Transactions:162 $5.0 has been deposited into account 16
+2021-05-25 14:07:34  INFO model.Transactions:158 $10.0 has been withdrawn from account 16
+2021-05-25 14:09:38  INFO model.Account:57 Account 21 has been approved.
+2021-05-25 14:10:51  INFO model.Transactions:167 $5.0 transfered from account 24 to account 12
+2021-05-25 14:21:43  INFO model.Account:57 Account 1 has been approved.
+2021-05-25 14:32:56  INFO model.Account:53 Account 26 has been created with starting balance 50.0
+2021-05-25 14:34:33  INFO model.Transactions:167 $5.0 transfered from account 12 to account 24
+2021-05-25 14:37:08  INFO model.Transactions:162 $5.0 has been deposited into account 12
+2021-05-25 14:39:02  INFO model.Account:61 Account 14 has been rejected.
+2021-05-25 14:40:18  INFO model.Account:61 Account 1 has been rejected.
+2021-05-25 14:40:32  INFO model.Account:57 Account 1 has been approved.
+2021-05-25 14:55:24  INFO model.Transactions:167 $10.0 transfered from account 16 to account 16
+2021-05-25 14:59:11  INFO model.Transactions:167 $1.0 transfered from account 16 to account 22
+2021-05-25 15:06:03  INFO model.Transactions:158 $50.0 has been withdrawn from account 16
+2021-05-25 15:46:43  INFO model.User:68 User, Number2 has been created
+2021-05-25 16:24:47  INFO model.Account:62 Account 16 has been approved.

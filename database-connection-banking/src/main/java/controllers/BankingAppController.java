@@ -1,11 +1,13 @@
 package controllers;
 
 import java.util.Scanner;
+
+import com.revature.dao.AccountDAOImpl;
+import com.revature.dao.TransactionDAOImpl;
+import com.revature.dao.UserDAOImpl;
 import com.revature.util.*;
 
 import model.Account;
-import model.Customer;
-import model.Employees;
 import model.Transactions;
 import model.User;
 
@@ -33,8 +35,9 @@ public class BankingAppController {
 			}
 		}
 		
-		String[] userInfo = login.getUserInfo(usernameEntry, passwordEntry);
-		User user = new User(Integer.parseInt(userInfo[0]), userInfo[1], userInfo[2], userInfo[3]);
+		//String[] userInfo = login.getUserInfo(usernameEntry, passwordEntry);
+		//User user = new User(Integer.parseInt(userInfo[0]), userInfo[1], userInfo[2], userInfo[3]);
+		User user = login.getUserInfo(usernameEntry, passwordEntry);
 		
 		if (user.getStatus().equals("Customer")) {
 			customerMenu(user);
@@ -48,28 +51,38 @@ public class BankingAppController {
 	
 	
 	public static void customerMenu(User user) {
-		System.out.println("Which of the following actions would you like to perform? "
-				+ "Please select a number corresponding to the action you desire."
-				+ "\n1. Create an account" + "\n2. Make a transfer"
-				+ "\n3. Deposit/Withdraw money from an account"
-				+ "\n4. View account balance");
-		int choice = scan.nextInt();
-		scan.nextLine();
-		action(choice, user);
+		int choice = -1;
+		while (choice != 0) {
+			System.out.println("");
+			System.out.println("Which of the following actions would you like to perform? "
+					+ "Please select a number corresponding to the action you desire."
+					+ "\n0. Quit the program"
+					+ "\n1. Create an account" + "\n2. Make a transfer"
+					+ "\n3. Deposit/Withdraw money from an account"
+					+ "\n4. View account balance");
+			choice = scan.nextInt();
+			scan.nextLine();
+			action(choice, user);
 		}
+	}
 	
 	public static void employeeMenu(User user) {
-		System.out.println("Which of the following actions would you like to perform? "
-				+ "Please select a number corresponding to the action you desire."
-				+ "\n1. Create an account" + "\n2. Make a transfer"
-				+ "\n3. Deposit/Withdraw money from an account"
-				+ "\n4. View account balance"
-				+ "\n5. Approve/Reject an account request"
-				+ "\n6. View customer accounts"
-				+ "\n7. Create new User");
-		int choice = scan.nextInt();
-		scan.nextLine();
-		action(choice, user);
+		int choice = -1;
+		while (choice != 0) {
+			System.out.println("");
+			System.out.println("Which of the following actions would you like to perform? "
+					+ "Please select a number corresponding to the action you desire."
+					+ "\n0. Quit the program"
+					+ "\n1. Create an account" + "\n2. Make a transfer"
+					+ "\n3. Deposit/Withdraw money from an account"
+					+ "\n4. View account balance"
+					+ "\n5. Approve/Reject an account request"
+					+ "\n6. View customer accounts"
+					+ "\n7. Create new User");
+			choice = scan.nextInt();
+			scan.nextLine();
+			action(choice, user);
+		}
 	}
 	
 	
@@ -80,14 +93,18 @@ public class BankingAppController {
 		}
 		
 		switch(choice) {
+		case 0:
+			System.out.println("You have successfully quit the program.");
+			break;
 		//Create an account
 		case 1:
 			System.out.println("Please enter the starting balance of your new account: ");
 			double balance = scan.nextDouble();
 			scan.nextLine();
 			Account newAccount = new Account(balance);
-			newAccount.addPendingAccountDB(user.getUserid());
-			newAccount.logAccount(newAccount.getNewestAccountID(), balance);
+			AccountDAOImpl accountDAO = new AccountDAOImpl();
+			accountDAO.addPendingAccountDB(newAccount, user.getUserid());
+			newAccount.logAccount(accountDAO.getNewestAccountID(), balance);
 			break;
 			
 		//Transfer between accounts	
@@ -96,7 +113,11 @@ public class BankingAppController {
 			int accountid01 = scan.nextInt();
 			scan.nextLine();
 			Account account01 = new Account(accountid01);
-			if(!account01.checkApproved(accountid01)) {
+			AccountDAOImpl accountDAO01 = new AccountDAOImpl();
+			if(!accountDAO01.checkValidID(account01)) {
+				break;
+			}
+			if(!accountDAO01.checkApproved(account01)) {
 				System.out.println("This account has not yet been approved.");
 				break;
 			}
@@ -104,7 +125,14 @@ public class BankingAppController {
 			int accountid02 = scan.nextInt();
 			scan.nextLine();
 			Account account02 = new Account(accountid02);
-			if(!account01.checkApproved(accountid02)) {
+			if(accountid01 == accountid02) {
+				System.out.println("You can't transfer money to the same account.");
+				break;
+			}
+			if(!accountDAO01.checkValidID(account02)) {
+				break;
+			}
+			if(!accountDAO01.checkApproved(account02)) {
 				System.out.println("This account has not yet been approved.");
 				break;
 			}
@@ -119,14 +147,16 @@ public class BankingAppController {
 					System.out.println("That is not a valid amount, try again: ");
 				}
 			}
-			Transactions transaction1 = new Transactions();
-			double balance01 = account01.getBalanceDB(accountid01, user.getUserid());
-			double balance02 = account02.getBalanceDB(accountid02);
+			Transactions transaction1 = new Transactions(amount01);
+			TransactionDAOImpl transactionDAO1 = new TransactionDAOImpl();
+			double balance01 = accountDAO01.getBalanceDB(account01, user.getUserid());
+			//Here
+			double balance02 = accountDAO01.getBalanceDB(account02);
 			if(balance01 == -1) {
 				break;
 			}
-			double newBalance01 = transaction1.withdrawDB(accountid01, user.getUserid(), amount01, balance01);
-			double newBalance02 = transaction1.depositDB(accountid02, amount01, balance02);
+			double newBalance01 = transactionDAO1.withdrawDB(account01, user.getUserid(), transaction1, balance01);
+			double newBalance02 = transactionDAO1.depositDB(account02, transaction1, balance02);
 			if(newBalance01 != -1) {
 				System.out.println("You have transfered $"+amount01+" from account "+accountid01+" to "
 						+ "account "+accountid02+"."
@@ -140,7 +170,7 @@ public class BankingAppController {
 			
 		//Make a withdrawal/deposit	
 		case 3:
-			Transactions transaction = new Transactions();
+			//Transactions transaction = new Transactions();
 			
 			System.out.println("Which of the following actions would you like to perform? "
 					+ "Please select a number corresponding to the action you desire."
@@ -157,7 +187,11 @@ public class BankingAppController {
 					int accountid = scan.nextInt();
 					scan.nextLine();
 					Account account0 = new Account(accountid);
-					if(!account0.checkApproved(accountid)) {
+					AccountDAOImpl accountDAO0 = new AccountDAOImpl();
+					if(!accountDAO0.checkValidID(account0)) {
+						break;
+					}
+					if(!accountDAO0.checkApproved(account0)) {
 						System.out.println("This account has not yet been approved.");
 						break;
 					}
@@ -172,11 +206,14 @@ public class BankingAppController {
 						System.out.println("That is not a valid amount, please try again.");
 					}
 					
-					double oldBalance = account0.getBalanceDB(accountid, user.getUserid());
+					Transactions transaction = new Transactions(amount);
+					TransactionDAOImpl transactionDAO = new TransactionDAOImpl();
+					
+					double oldBalance = accountDAO0.getBalanceDB(account0, user.getUserid());
 					if(oldBalance == -1) {
 						break;
 					}
-					double newBalance = transaction.depositDB(accountid, user.getUserid(), amount, oldBalance);
+					double newBalance = transactionDAO.depositDB(account0, user.getUserid(), transaction, oldBalance);
 					if(newBalance != -1) {
 						System.out.println("You have deposited $"+amount+" into account: "+accountid+". "
 								+ "\n Your balance is now $"+newBalance);
@@ -190,7 +227,11 @@ public class BankingAppController {
 					int accountid1 = scan.nextInt();
 					scan.nextLine();
 					Account account1 = new Account(accountid1);
-					if(!account1.checkApproved(accountid1)) {
+					AccountDAOImpl accountDAO1 = new AccountDAOImpl();
+					if(!accountDAO1.checkValidID(account1)) {
+						break;
+					}
+					if(!accountDAO1.checkApproved(account1)) {
 						System.out.println("This account has not yet been approved.");
 						break;
 					}
@@ -205,15 +246,18 @@ public class BankingAppController {
 						System.out.println("That is not a valid amount, please try again.");
 					}
 					
-					double oldBalance1 = account1.getBalanceDB(accountid1, user.getUserid());
+					Transactions transaction2 = new Transactions(amount1);
+					TransactionDAOImpl transactionDAO2 = new TransactionDAOImpl();
+					
+					double oldBalance1 = accountDAO1.getBalanceDB(account1, user.getUserid());
 					if(oldBalance1 == -1) {
 						break;
 					}
-					double newBalance1 = transaction.withdrawDB(accountid1, user.getUserid(), amount1, oldBalance1);
+					double newBalance1 = transactionDAO2.withdrawDB(account1, user.getUserid(), transaction2, oldBalance1);
 					if(newBalance1 != -1) {
 						System.out.println("You have withdrawn $"+amount1+" from account: "+accountid1+". "
 								+ "\n Your balance is now $"+newBalance1);
-						transaction.logWithdrawl(amount1, accountid1);
+						transaction2.logWithdrawl(amount1, accountid1);
 					} else {
 						System.out.println("Withdraw failed.");
 					}
@@ -230,11 +274,15 @@ public class BankingAppController {
 			int accountid = scan.nextInt();
 			scan.nextLine();
 			Account account2 = new Account(accountid);
-			if(!account2.checkApproved(accountid)) {
+			AccountDAOImpl accountDAO2 = new AccountDAOImpl();
+			if(!accountDAO2.checkValidID(account2)) {
+				break;
+			}
+			if(!accountDAO2.checkApproved(account2)) {
 				System.out.println("This account has not yet been approved.");
 				break;
 			}
-			double getbalance = account2.getBalanceDB(accountid, user.getUserid());
+			double getbalance = accountDAO2.getBalanceDB(account2, user.getUserid());
 			if (getbalance != -1) {
 				System.out.println("The balance of account "+accountid+" is "+getbalance);
 			}
@@ -244,9 +292,15 @@ public class BankingAppController {
 		//Approve/Reject account requests
 		case 5:
 			Account account3 = new Account();
+			AccountDAOImpl accountDAO3 = new AccountDAOImpl();
 			System.out.println("Enter accountid: ");
 			int accountid1 = scan.nextInt();
 			scan.nextLine();
+			account3.setAccountid(accountid1);
+			if(!accountDAO3.checkValidID(account3)) {
+				break;
+			}
+			account3.setAccountid(accountid1);
 			System.out.println("Which of the following actions would you like to perform? "
 					+ "Please select a number corresponding to the action you desire."
 					+ "\n1. Approve account."
@@ -258,11 +312,11 @@ public class BankingAppController {
 				scan.nextLine();
 				switch(choice2) {
 					case 1:
-						account3.approveAccountDB(accountid1);
+						accountDAO3.approveAccountDB(account3);
 						account3.logApprove(accountid1);
 						break;
 					case 2:
-						account3.rejectAccountDB(accountid1);
+						accountDAO3.rejectAccountDB(account3);
 						account3.logReject(accountid1);
 						break;
 					default:
@@ -273,11 +327,12 @@ public class BankingAppController {
 			
 		//Get customer accounts	
 		case 6:
-			Account account4 = new Account();
+			//Account account4 = new Account();
+			AccountDAOImpl accountDAO4 = new AccountDAOImpl();
 			System.out.println("Enter User ID: ");
 			int userid = scan.nextInt();
 			scan.nextLine();
-			account4.getCustomerAccountsDB(userid);
+			accountDAO4.getCustomerAccountsDB(userid);
 			break;
 			
 		//Create a user
@@ -291,7 +346,9 @@ public class BankingAppController {
 			String statusEntry = scan.nextLine();
 			
 			User newUser = new User(1, userEntry, passEntry, statusEntry);
-			newUser.addUserDB();
+			//newUser.addUserDB();
+			UserDAOImpl userDAO = new UserDAOImpl();
+			userDAO.addUserDB(newUser);
 			newUser.logUser();
 			break;
 		default:

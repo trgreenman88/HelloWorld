@@ -8,10 +8,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.revature.dao.UserDAOImpl;
+
 import model.User;
 
 public class UserTest {
 	public User user;
+	public UserDAOImpl userDAO;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() {
@@ -27,6 +30,7 @@ public class UserTest {
 	public void setUp() {
 		System.out.println("Before test");
 		user = new User("MrBigglesworth", "Meow", "Customer");
+		userDAO = new UserDAOImpl();
 	}
 
 	@After
@@ -34,11 +38,10 @@ public class UserTest {
 		System.out.println("After test");
 	}
 
-	//Ask about how tests can be used when the return type is void
 	@Test
 	public void testAdd_1() {
 		System.out.println("Testing addUserDB");
-		boolean result = user.addUserDB();
+		boolean result = userDAO.addUserDB(user);
 		assertTrue(result == true);
 	}
 }
